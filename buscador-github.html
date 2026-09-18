@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Buscador de usuarios de GitHub. Consume la API pública de GitHub con manejo de errores con try/catch/finally.">
+    <title>Buscador de Usuarios de GitHub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐙</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        try {
+            const temaGuardado = localStorage.getItem('gh-buscador-tema');
+            if (temaGuardado) {
+                document.documentElement.dataset.theme = temaGuardado;
+            } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        } catch (e) { /* almacenamiento no disponible */ }
+    </script>
+</head>
+<body>
+    <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+
+    <div class="loading-screen" id="pantallaCarga" hidden aria-hidden="true" role="status">
+        <div class="loading-logo" aria-hidden="true">🐙</div>
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p>Buscando usuario en GitHub…</p>
+    </div>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="logo" aria-hidden="true">🐙</div>
+            <h1>GitHub User Search</h1>
+            <p class="subtitle">Busca cualquier usuario de GitHub por su username</p>
+            <div class="tema-wrap">
+                <button type="button" class="btn-icon" id="btnTema" aria-label="Cambiar a tema oscuro">
+                    <svg class="icono-luna" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icono-sol" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main id="contenido">
+            <form class="search-box" role="search" onsubmit="buscar(); return false;">
+                <label class="sr-only" for="username">Nombre de usuario de GitHub</label>
+                <input type="text" id="username" name="username" placeholder="Ej. octocat"
+                       autocomplete="off" spellcheck="false" enterkeyhint="search"
+                       aria-describedby="hint-busqueda">
+                <button type="submit" class="btn-primary" id="btnBuscar" aria-label="Buscar usuario en GitHub">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span>Buscar</span>
+                </button>
+            </form>
+
+            <p class="hint" id="hint-busqueda">Pulsa <kbd>/</kbd> para enfocar la búsqueda y <kbd>Enter</kbd> para buscar</p>
+
+            <section class="history" id="historial" hidden aria-labelledby="historial-titulo">
+                <div class="history-head">
+                    <h2 id="historial-titulo">Búsquedas recientes</h2>
+                    <button type="button" class="btn-link" id="btnLimpiarHistorial">Limpiar historial</button>
+                </div>
+                <div class="chips" id="chips"></div>
+            </section>
+
+            <section id="resultado" role="status" aria-live="polite" aria-atomic="true" aria-busy="false">
+                <div class="empty">
+                    <span aria-hidden="true">🔎</span>
+                    <p>Busca un usuario para ver su perfil de GitHub</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Datos de la <a href="https://docs.github.com/es/rest/users/users" target="_blank" rel="noopener noreferrer">API pública de GitHub</a> ·
+            Ejercicio de manejo de errores con try / catch / finally</p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/app.js" defer></script>
+</body>
+</html>
